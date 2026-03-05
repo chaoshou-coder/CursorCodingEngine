@@ -2,7 +2,7 @@
 
 ## codingengine-workflow.mdc
 
-- 复杂任务（3+ 文件或跨模块）必须走 simplerig
+- 复杂任务（3+ 文件或跨模块）必须走 codingengine
 - 规划产出 plan.json
 - 每任务独立 commit
 - 验证失败必须迭代修复

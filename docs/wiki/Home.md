@@ -1,6 +1,6 @@
 # CodingEngine
 
-> 以 simplerig 为编排骨架，融合 ECC/OMO 的 Agent 定义、Skill 模式和反馈机制，构建「编排+执行+迭代」解决方案。
+> 以 codingengine 为独立编排工具，参考 simplerig 设计，融合 ECC/OMO 的 Agent 定义、Skill 模式和反馈机制，构建「编排+执行+迭代」解决方案。
 
 ## 核心价值
 
@@ -14,7 +14,7 @@
 
 ## 技术栈
 
-- **simplerig** — 事件溯源、DAG 调度、断点续传、质量门禁
+- **codingengine** — 事件溯源、DAG 调度、断点续传、质量门禁
 - **Cursor** — Agent 执行环境
 - **Skill 胶水** — SKILL.md 为唯一集成点
 
@@ -28,8 +28,10 @@
 
 ## 致谢
 
-- simplerig
+- simplerig（设计参考）
 - everything-claude-code (ECC)
 - oh-my-opencode (OMO)
 - OpenSpec
 - Anthropic code-simplifier
+
+> 以上为参考项目，非项目依赖。`simplerig`、`everything-claude-code`、`oh-my-opencode`、`OpenSpec` 目录在本仓库中仅作参考，不参与安装。

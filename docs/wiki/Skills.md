@@ -1,6 +1,6 @@
 # Skill 系统
 
-## simplerig Skill
+## codingengine Skill（主工作流）
 
 主工作流 Skill，包含：
 - 4 阶段流程（plan → develop → verify → 完成）
@@ -21,5 +21,5 @@
 
 ## 何时启用
 
-- simplerig：用户说「执行计划」「按计划执行」、或 @ .cursor/plans/*.plan.md
-- code-simplifier：simplerig develop 中、或用户说「简化代码」
+- codingengine：用户说「执行计划」「按计划执行」、或 @ .cursor/plans/*.plan.md
+- code-simplifier：codingengine develop 中、或用户说「简化代码」

@@ -3,7 +3,7 @@
 ## 配置文件位置
 
 - 项目根 `config.yaml`
-- 或环境变量 `SIMPLERIG_CONFIG` 指向的路径
+- 或环境变量 `CODINGENGINE_CONFIG` 指向的路径
 
 ## 模型配置
 
@@ -40,6 +40,6 @@ tools:
 
 ## 环境变量
 
-- `SIMPLERIG_CONFIG` — 配置文件路径
-- `SIMPLERIG_DB` — 数据库路径
-- `SIMPLERIG_LOGS` — 日志路径
+- `CODINGENGINE_CONFIG` — 配置文件路径
+- `CODINGENGINE_DATA` — 数据目录（默认 `~/.codingengine`）
+- `CODINGENGINE_LOGS` — 日志路径

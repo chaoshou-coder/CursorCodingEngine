@@ -1,6 +1,7 @@
 """
 事件系统 - JSONL 事件溯源基础设施
 """
+
 import hashlib
 import json
 import os
@@ -11,11 +12,13 @@ from pathlib import Path
 from threading import Lock
 from typing import Any, Dict, Iterator, List, Optional, Union
 
-if os.name == 'nt':
+if os.name == "nt":
     import msvcrt
+
     fcntl = None
 else:
     import fcntl
+
     msvcrt = None
 
 
@@ -37,7 +40,7 @@ class Event:
         )
 
     def to_json(self) -> str:
-        return json.dumps(asdict(self), ensure_ascii=False, separators=(',', ':'))
+        return json.dumps(asdict(self), ensure_ascii=False, separators=(",", ":"))
 
     @classmethod
     def from_json(cls, line: str) -> "Event":
@@ -56,10 +59,20 @@ class ArtifactRef:
 
 
 SENSITIVE_KEYS = {
-    'api_key', 'apikey', 'api-key', 'api_token', 'secret', 'secret_key',
-    'password', 'passwd', 'token', 'access_token', 'credential', 'auth',
+    "api_key",
+    "apikey",
+    "api-key",
+    "api_token",
+    "secret",
+    "secret_key",
+    "password",
+    "passwd",
+    "token",
+    "access_token",
+    "credential",
+    "auth",
 }
-SAFE_KEYS = {'token_usage', 'prompt_tokens', 'completion_tokens', 'total_tokens'}
+SAFE_KEYS = {"token_usage", "prompt_tokens", "completion_tokens", "total_tokens"}
 
 
 def is_sensitive_key(key: str) -> bool:
@@ -74,7 +87,9 @@ def sanitize_dict(data: Dict[str, Any]) -> Dict[str, Any]:
         elif isinstance(value, dict):
             result[key] = sanitize_dict(value)
         elif isinstance(value, list):
-            result[key] = [sanitize_dict(v) if isinstance(v, dict) else v for v in value]
+            result[key] = [
+                sanitize_dict(v) if isinstance(v, dict) else v for v in value
+            ]
         else:
             result[key] = value
     return result
@@ -82,8 +97,11 @@ def sanitize_dict(data: Dict[str, Any]) -> Dict[str, Any]:
 
 def sanitize_event(event: Event) -> Event:
     return Event(
-        type=event.type, timestamp=event.timestamp, seq=event.seq,
-        run_id=event.run_id, data=sanitize_dict(event.data),
+        type=event.type,
+        timestamp=event.timestamp,
+        seq=event.seq,
+        run_id=event.run_id,
+        data=sanitize_dict(event.data),
     )
 
 
@@ -95,15 +113,17 @@ class FileLock:
     def acquire(self, blocking: bool = True, timeout: float = None) -> bool:
         self.lock_path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            self._fd = open(self.lock_path, 'w')
-            if os.name == 'nt':
+            self._fd = open(self.lock_path, "w")
+            if os.name == "nt":
                 start = time.time()
                 while True:
                     try:
                         msvcrt.locking(self._fd.fileno(), msvcrt.LK_NBLCK, 1)
                         return True
                     except IOError:
-                        if not blocking or (timeout and (time.time() - start) >= timeout):
+                        if not blocking or (
+                            timeout and (time.time() - start) >= timeout
+                        ):
                             return False
                         time.sleep(0.1)
             else:
@@ -122,7 +142,7 @@ class FileLock:
     def release(self):
         if self._fd:
             try:
-                if os.name == 'nt':
+                if os.name == "nt":
                     msvcrt.locking(self._fd.fileno(), msvcrt.LK_UNLCK, 1)
                 else:
                     fcntl.flock(self._fd.fileno(), fcntl.LOCK_UN)
@@ -150,7 +170,7 @@ class EventWriter:
         self._seq = 0
         self._lock = Lock()
         if self.events_file.exists():
-            for line in open(self.events_file, 'r', encoding='utf-8'):
+            for line in open(self.events_file, "r", encoding="utf-8"):
                 if line.strip():
                     try:
                         e = Event.from_json(line.strip())
@@ -165,8 +185,8 @@ class EventWriter:
             if self.sanitize:
                 event = sanitize_event(event)
             self.events_file.parent.mkdir(parents=True, exist_ok=True)
-            with open(self.events_file, 'a', encoding='utf-8') as f:
-                f.write(event.to_json() + '\n')
+            with open(self.events_file, "a", encoding="utf-8") as f:
+                f.write(event.to_json() + "\n")
                 f.flush()
                 os.fsync(f.fileno())
             return event
@@ -182,7 +202,7 @@ class EventReader:
     def read_all(self) -> List[Event]:
         events = []
         if self.events_file.exists():
-            for line in open(self.events_file, 'r', encoding='utf-8'):
+            for line in open(self.events_file, "r", encoding="utf-8"):
                 if line.strip():
                     try:
                         events.append(Event.from_json(line.strip()))
@@ -192,7 +212,7 @@ class EventReader:
 
     def iter_events(self) -> Iterator[Event]:
         if self.events_file.exists():
-            for line in open(self.events_file, 'r', encoding='utf-8'):
+            for line in open(self.events_file, "r", encoding="utf-8"):
                 if line.strip():
                     try:
                         yield Event.from_json(line.strip())
@@ -207,29 +227,42 @@ class EventReader:
 
 
 class ArtifactStore:
-    MIME_TYPES = {'.json': 'application/json', '.txt': 'text/plain', '.md': 'text/markdown', '.py': 'text/x-python'}
+    MIME_TYPES = {
+        ".json": "application/json",
+        ".txt": "text/plain",
+        ".md": "text/markdown",
+        ".py": "text/x-python",
+    }
 
     def __init__(self, run_dir: Path):
         self.artifacts_dir = Path(run_dir) / "artifacts"
         self.artifacts_dir.mkdir(parents=True, exist_ok=True)
 
-    def write(self, name: str, content: Union[str, bytes, dict, list], mime: str = None) -> ArtifactRef:
+    def write(
+        self, name: str, content: Union[str, bytes, dict, list], mime: str = None
+    ) -> ArtifactRef:
         path = self.artifacts_dir / name
         if isinstance(content, (dict, list)):
-            content_bytes = json.dumps(content, ensure_ascii=False, indent=2).encode('utf-8')
-            mime = mime or 'application/json'
+            content_bytes = json.dumps(content, ensure_ascii=False, indent=2).encode(
+                "utf-8"
+            )
+            mime = mime or "application/json"
         elif isinstance(content, str):
-            content_bytes = content.encode('utf-8')
+            content_bytes = content.encode("utf-8")
         else:
             content_bytes = content
         sha256 = hashlib.sha256(content_bytes).hexdigest()
-        mime = mime or self.MIME_TYPES.get(path.suffix.lower(), 'application/octet-stream')
+        mime = mime or self.MIME_TYPES.get(
+            path.suffix.lower(), "application/octet-stream"
+        )
         path.parent.mkdir(parents=True, exist_ok=True)
-        with open(path, 'wb') as f:
+        with open(path, "wb") as f:
             f.write(content_bytes)
             f.flush()
             os.fsync(f.fileno())
-        return ArtifactRef(ref=f"artifacts/{name}", sha256=sha256, size=len(content_bytes), mime=mime)
+        return ArtifactRef(
+            ref=f"artifacts/{name}", sha256=sha256, size=len(content_bytes), mime=mime
+        )
 
     def read(self, name: str) -> bytes:
         path = self.artifacts_dir / name
@@ -238,7 +271,7 @@ class ArtifactStore:
         return path.read_bytes()
 
     def read_json(self, name: str) -> Any:
-        return json.loads(self.read(name).decode('utf-8'))
+        return json.loads(self.read(name).decode("utf-8"))
 
     def verify(self, ref: ArtifactRef) -> bool:
         name = ref.ref.replace("artifacts/", "")
@@ -246,7 +279,10 @@ class ArtifactStore:
         if not path.exists():
             return False
         content = path.read_bytes()
-        return hashlib.sha256(content).hexdigest() == ref.sha256 and len(content) == ref.size
+        return (
+            hashlib.sha256(content).hexdigest() == ref.sha256
+            and len(content) == ref.size
+        )
 
 
 def create_run_context(run_dir: Path) -> tuple:

@@ -1,4 +1,5 @@
 """BDD - Gherkin 解析与执行"""
+
 import json
 import re
 import time
@@ -73,14 +74,26 @@ def _parse_gherkin(content: str) -> Feature:
                 current_scenario = Scenario(name="(no name)")
             m = re.match(r"^(given|when|then|and|but)\s+(.*)$", line, re.I)
             if m:
-                current_scenario.steps.append(Step(keyword=m.group(1).capitalize(), text=m.group(2).strip(), line_number=ln))
+                current_scenario.steps.append(
+                    Step(
+                        keyword=m.group(1).capitalize(),
+                        text=m.group(2).strip(),
+                        line_number=ln,
+                    )
+                )
     if current_scenario:
         feature.scenarios.append(current_scenario)
     return feature
 
 
 class BDDRunner:
-    def __init__(self, config, writer: EventWriter, run_id: str, store: Optional[ArtifactStore] = None):
+    def __init__(
+        self,
+        config,
+        writer: EventWriter,
+        run_id: str,
+        store: Optional[ArtifactStore] = None,
+    ):
         self.config = config
         self.writer = writer
         self.run_id = run_id
@@ -100,7 +113,9 @@ class BDDRunner:
         start = time.perf_counter()
         path = Path(feature_path)
         feature = _parse_gherkin(path.read_text(encoding="utf-8"))
-        self.writer.emit("bdd.feature_started", self.run_id, path=str(path), feature=feature.name)
+        self.writer.emit(
+            "bdd.feature_started", self.run_id, path=str(path), feature=feature.name
+        )
         scenario_results = []
         all_passed = True
         for sc in feature.scenarios:
@@ -113,26 +128,63 @@ class BDDRunner:
                         func(**params) if params else func()
                     step_results.append(StepResult(step=step, passed=True))
                 except Exception as e:
-                    step_results.append(StepResult(step=step, passed=False, error=str(e)))
+                    step_results.append(
+                        StepResult(step=step, passed=False, error=str(e))
+                    )
                     sc_passed = False
-            scenario_results.append(ScenarioResult(scenario=sc, steps=step_results, passed=sc_passed))
+            scenario_results.append(
+                ScenarioResult(scenario=sc, steps=step_results, passed=sc_passed)
+            )
             if not sc_passed:
                 all_passed = False
         duration_ms = int((time.perf_counter() - start) * 1000)
-        self.writer.emit("bdd.feature_completed", self.run_id, path=str(path), feature=feature.name, passed=all_passed, duration_ms=duration_ms)
-        return TestResult(feature_path=str(path), feature_name=feature.name, scenarios=scenario_results, passed=all_passed, duration_ms=duration_ms)
+        self.writer.emit(
+            "bdd.feature_completed",
+            self.run_id,
+            path=str(path),
+            feature=feature.name,
+            passed=all_passed,
+            duration_ms=duration_ms,
+        )
+        return TestResult(
+            feature_path=str(path),
+            feature_name=feature.name,
+            scenarios=scenario_results,
+            passed=all_passed,
+            duration_ms=duration_ms,
+        )
 
-    def generate_report(self, result: TestResult, format: str = "text", store: Optional[ArtifactStore] = None) -> str:
+    def generate_report(
+        self,
+        result: TestResult,
+        format: str = "text",
+        store: Optional[ArtifactStore] = None,
+    ) -> str:
         store = store or self.store
         if format == "json":
-            data = {"feature_path": result.feature_path, "feature_name": result.feature_name, "passed": result.passed, "duration_ms": result.duration_ms, "scenarios": [{"name": sr.scenario.name, "passed": sr.passed} for sr in result.scenarios]}
+            data = {
+                "feature_path": result.feature_path,
+                "feature_name": result.feature_name,
+                "passed": result.passed,
+                "duration_ms": result.duration_ms,
+                "scenarios": [
+                    {"name": sr.scenario.name, "passed": sr.passed}
+                    for sr in result.scenarios
+                ],
+            }
             out = json.dumps(data, ensure_ascii=False, indent=2)
             if store:
                 store.write("bdd_report.json", data)
             return out
-        lines = [f"Feature: {result.feature_name}", f"Passed: {result.passed}", f"Duration: {result.duration_ms} ms"]
+        lines = [
+            f"Feature: {result.feature_name}",
+            f"Passed: {result.passed}",
+            f"Duration: {result.duration_ms} ms",
+        ]
         for sr in result.scenarios:
-            lines.append(f"  Scenario: {sr.scenario.name} ({'PASS' if sr.passed else 'FAIL'})")
+            lines.append(
+                f"  Scenario: {sr.scenario.name} ({'PASS' if sr.passed else 'FAIL'})"
+            )
         return "\n".join(lines)
 
 
@@ -154,5 +206,7 @@ class BDDGenerator:
         safe_name = re.sub(r"[^\w\-]", "_", name).strip("_") or "feature"
         path = output_dir / f"{safe_name}.feature"
         path.write_text("\n".join(lines), encoding="utf-8")
-        self.writer.emit("bdd.feature_generated", self.run_id, path=str(path), feature=name)
+        self.writer.emit(
+            "bdd.feature_generated", self.run_id, path=str(path), feature=name
+        )
         return path

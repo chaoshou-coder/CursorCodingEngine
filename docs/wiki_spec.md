@@ -43,7 +43,7 @@ docs/wiki/
 - 项目一句话描述
 - 核心价值主张（任务工程：50% → 70-80%）
 - 三大能力：编排 + 执行 + 迭代
-- 技术栈概览（simplerig + Cursor + Skill 胶水）
+- 技术栈概览（codingengine + Cursor + Skill 胶水）
 - 快速链接（安装、配置、工作流、评估）
 - 参考项目致谢（simplerig, ECC, OMO, OpenSpec, Anthropic code-simplifier）
 
@@ -51,18 +51,18 @@ docs/wiki/
 
 - 前置要求（Python 3.10+, Cursor, Git）
 - 5 分钟上手流程
-- 克隆/安装 simplerig
+- 克隆/安装 codingengine
 - 复制 Skill 到项目
 - 第一次运行（示例需求）
 - 预期输出（plan.json, events.jsonl, artifacts/）
 
 ### Installation.md（安装指南）
 
-- 方式一：克隆 simplerig 到项目
+- 方式一：克隆 CursorCodingEngine 到项目
 - 方式二：git submodule
 - 方式三：pip install（若发布到 PyPI）
-- 验证安装（simplerig --help, pip show）
-- 虚拟环境要求
+- 验证安装（codingengine --help, pip show codingengine）
+- 虚拟环境要求（建议命名 CCEfor<项目名>）
 - Windows / macOS / Linux 差异
 - 常见安装问题
 
@@ -75,13 +75,13 @@ docs/wiki/
 - 工具链（linter, formatter, test_runner）
 - 并行配置（max_agents, task_groups）
 - 超时与重试
-- 环境变量（SIMPLERIG_CONFIG, SIMPLERIG_DB 等）
+- 环境变量（CODINGENGINE_CONFIG, CODINGENGINE_DATA 等）
 
 ### Architecture.md（架构设计）
 
 - 整体架构图（Mermaid）
 - 三层能力：编排、执行、迭代
-- simplerig 的角色（事件溯源、DAG、断点续传）
+- codingengine 的角色（事件溯源、DAG、断点续传）
 - Skill 即胶水的设计决策
 - 数据流（用户需求 → init → plan → develop → verify → 完成）
 - 与 ECC/OMO/OpenSpec 的概念映射
@@ -108,7 +108,7 @@ docs/wiki/
 
 ### Skills.md（Skill 系统）
 
-- simplerig Skill：主工作流、阶段指令、执行纪律
+- codingengine Skill：主工作流、阶段指令、执行纪律
 - code-simplifier Skill：触发时机、核心原则、泛化说明
 - Skill 格式（YAML frontmatter + Markdown）
 - 何时启用、如何引用
@@ -116,14 +116,14 @@ docs/wiki/
 
 ### Rules.md（Rules 体系）
 
-- codingengine-workflow.mdc：复杂任务走 simplerig、规划产出、原子提交
+- codingengine-workflow.mdc：复杂任务走 codingengine、规划产出、原子提交
 - quality-standards.mdc：lint、测试覆盖、安全底线
 - context-management.mdc：静态注入、修改前读取、跨文件理解
 - Rules 与 Skill 的分工
 
 ### simplerig/Overview.md
 
-- simplerig 简介与定位
+- simplerig 简介与定位（设计参考）
 - 事件溯源、阶段机、DAG 调度
 - 与 CodingEngine 的关系
 
@@ -165,7 +165,7 @@ docs/wiki/
 
 ### Troubleshooting.md（故障排查）
 
-- simplerig 命令不可用
+- codingengine 命令不可用
 - 虚拟环境错误（装到错误 venv）
 - config.yaml 未找到
 - plan 阶段卡住
@@ -176,7 +176,7 @@ docs/wiki/
 
 ### FAQ.md（常见问题）
 
-- 为什么用 simplerig 而不是自己写？
+- 为什么用 codingengine 而不是自己写？
 - 为什么不需要 14 个 Agent？
 - 为什么废弃性能拐点？
 - code-simplifier 会增加 token 消耗吗？
@@ -193,13 +193,13 @@ docs/wiki/
 ### Glossary.md（术语表）
 
 - Agent、Skill、Rule、Hook
-- simplerig、DAG、事件溯源、断点续传
+- codingengine、DAG、事件溯源、断点续传
 - 原子提交、回滚、Wisdom
 - context_limit、plan.json、artifacts
 
 ### References.md（参考项目与引用）
 
-- simplerig（chaoshou-coder/simplerig）
+- codingengine（chaoshou-coder/CursorCodingEngine）
 - everything-claude-code
 - oh-my-opencode
 - OpenSpec
@@ -256,6 +256,6 @@ docs/wiki/
 
 - **wiki-scaffold**：创建 docs/wiki/ 目录结构及 Home.md、Getting-Started.md 骨架
 - **wiki-core**：完成 Architecture、Concepts、Workflow、Skills、Rules、Configuration
-- **wiki-reference**：完成 simplerig、code-simplifier 子目录文档
+- **wiki-reference**：完成 simplerig（设计参考）、code-simplifier 子目录文档
 - **wiki-ops**：完成 Troubleshooting、FAQ、Contributing、Glossary
 - **wiki-sync**：配置 GitHub Wiki 同步（若采用方式 B）

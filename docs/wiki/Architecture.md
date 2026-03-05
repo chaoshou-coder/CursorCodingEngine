@@ -27,7 +27,7 @@ flowchart TB
 
 ## 三层能力
 
-1. **编排** — simplerig planner 按 context_limit 拆分，DAG 调度
+1. **编排** — codingengine planner 按 context_limit 拆分，DAG 调度
 2. **执行** — 每 task 原子提交，失败可回滚
 3. **迭代** — verify 失败 → 诊断 → 重试（最多 3 轮）
 

@@ -27,8 +27,8 @@ models:
 
 ```yaml
 paths:
-  database: "${SIMPLERIG_DB:-./simplerig_data/memory.db}"
-  logs: "${SIMPLERIG_LOGS:-./simplerig_data/logs}"
+  database: "${CODINGENGINE_DATA:-~/.codingengine}/memory.db"
+  logs: "${CODINGENGINE_LOGS:-~/.codingengine/logs}"
 ```
 
 ## tools

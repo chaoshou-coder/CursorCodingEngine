@@ -2,6 +2,7 @@
 Config - 统一配置加载器
 所有配置从 config.yaml 读取，默认路径 ~/.codingengine
 """
+
 import os
 import yaml
 from pathlib import Path
@@ -11,12 +12,17 @@ from dataclasses import dataclass, field
 
 def _data_dir() -> Path:
     """数据目录，默认 ~/.codingengine"""
-    return Path(os.environ.get("CODINGENGINE_DATA", "~/.codingengine")).expanduser().resolve()
+    return (
+        Path(os.environ.get("CODINGENGINE_DATA", "~/.codingengine"))
+        .expanduser()
+        .resolve()
+    )
 
 
 @dataclass
 class ModelConfig:
     """模型配置"""
+
     context_limit: int
     strengths: list
     cost_per_1k: float = 0.0
@@ -35,6 +41,7 @@ class ModelConfig:
 @dataclass
 class Config:
     """CodingEngine 配置"""
+
     models: Dict[str, ModelConfig] = field(default_factory=dict)
     roles: Dict[str, str] = field(default_factory=dict)
     api: Dict[str, Any] = field(default_factory=dict)
@@ -80,6 +87,7 @@ class Config:
     def _parse(cls, data: Dict) -> "Config":
         """解析配置数据"""
         import warnings
+
         models = {}
         for name, info in data.get("models", {}).get("registry", {}).items():
             info = dict(info)
@@ -96,7 +104,11 @@ class Config:
             models[name] = ModelConfig(**info)
 
         base = _data_dir()
-        default_paths = {"database": base / "memory.db", "logs": base / "logs", "temp": base / "temp"}
+        default_paths = {
+            "database": base / "memory.db",
+            "logs": base / "logs",
+            "temp": base / "temp",
+        }
         paths = {}
         for key, value in data.get("paths", {}).items():
             if isinstance(value, str):
@@ -161,7 +173,12 @@ class Config:
                 "formatter_args": [],
                 "test_runner_args": ["-v"],
             },
-            timeouts={"tdd_max_retries": 3, "monitor_stall": 60, "run_lock": 30, "tool": 300},
+            timeouts={
+                "tdd_max_retries": 3,
+                "monitor_stall": 60,
+                "run_lock": 30,
+                "tool": 300,
+            },
             parallel={"default_agents": 3, "task_groups": 3},
         )
 

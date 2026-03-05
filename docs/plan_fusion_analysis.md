@@ -1,5 +1,7 @@
 # 两个 CodingEngine 计划的融合分析
 
+> **当前状态**：CodingEngine 已作为独立产品实现（`src/codingengine/`），不再依赖 simplerig。simplerig 为设计参考，不参与安装。
+
 ## 一、两计划核心差异
 
 | 维度 | Plan 1 (Product Plan) | Plan 2 (Revised Plan) |

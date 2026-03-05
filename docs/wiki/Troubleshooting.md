@@ -1,15 +1,15 @@
 # 故障排查
 
-## simplerig 命令不可用
+## codingengine 命令不可用
 
-- 确认已激活项目 .venv
-- 使用 `python -m simplerig.cli`
-- `pip install -e ./simplerig`
+- 确认已激活项目 venv（建议命名 CCEfor<项目名>，便于区分）
+- 使用 `python -m codingengine.cli`
+- `pip install -e .`
 
 ## config.yaml 未找到
 
 - 检查项目根目录
-- 设置 `SIMPLERIG_CONFIG` 环境变量
+- 设置 `CODINGENGINE_CONFIG` 环境变量
 
 ## plan 阶段卡住
 
@@ -33,5 +33,5 @@
 
 ## 断点续传失败
 
-- `simplerig status` 查看状态
+- `codingengine status` 查看状态
 - 检查 events.jsonl 完整性

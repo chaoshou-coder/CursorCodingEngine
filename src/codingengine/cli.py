@@ -1,4 +1,5 @@
 """CodingEngine CLI"""
+
 import argparse
 import os
 import sys
@@ -17,7 +18,11 @@ if sys.platform == "win32":
 
 def get_runs_dir() -> Path:
     """数据目录 ~/.codingengine/runs，不污染项目"""
-    base = Path(os.environ.get("CODINGENGINE_DATA", "~/.codingengine")).expanduser().resolve()
+    base = (
+        Path(os.environ.get("CODINGENGINE_DATA", "~/.codingengine"))
+        .expanduser()
+        .resolve()
+    )
     return base / "runs"
 
 
@@ -29,7 +34,11 @@ def get_latest_run_id() -> Optional[str]:
     runs_dir = get_runs_dir()
     if not runs_dir.exists():
         return None
-    runs = sorted([d for d in runs_dir.iterdir() if d.is_dir()], key=lambda d: d.stat().st_mtime, reverse=True)
+    runs = sorted(
+        [d for d in runs_dir.iterdir() if d.is_dir()],
+        key=lambda d: d.stat().st_mtime,
+        reverse=True,
+    )
     return runs[0].name if runs else None
 
 
@@ -53,7 +62,9 @@ def create_parser() -> argparse.ArgumentParser:
     run_p = sub.add_parser("run", help="运行工作流")
     run_p.add_argument("requirement", nargs="?", help="需求描述")
     run_p.add_argument("--resume", nargs="?", const="latest", help="恢复执行")
-    run_p.add_argument("--from-stage", choices=["plan", "develop", "verify", "integrate"])
+    run_p.add_argument(
+        "--from-stage", choices=["plan", "develop", "verify", "integrate"]
+    )
     run_p.add_argument("--fail-fast", action="store_true")
     run_p.add_argument("--tdd", action="store_true")
     run_p.add_argument("--bdd", action="store_true")
@@ -80,6 +91,7 @@ def cmd_init(args) -> int:
     (run_dir / "artifacts").mkdir(exist_ok=True)
     (run_dir / "locks").mkdir(exist_ok=True)
     from .events import EventWriter
+
     EventWriter(run_dir).emit("run.started", run_id, requirement=args.requirement)
     print(f"run_id={run_id}")
     return 0
@@ -93,12 +105,17 @@ def cmd_emit(args) -> int:
     data = {}
     if args.data:
         import json
+
         data = json.loads(args.data)
     if args.stage:
         data["stage"] = args.stage
     if args.prompt_tokens is not None or args.completion_tokens is not None:
-        data["token_usage"] = {"prompt_tokens": args.prompt_tokens or 0, "completion_tokens": args.completion_tokens or 0}
+        data["token_usage"] = {
+            "prompt_tokens": args.prompt_tokens or 0,
+            "completion_tokens": args.completion_tokens or 0,
+        }
     from .events import EventWriter
+
     EventWriter(run_dir).emit(args.event, args.run_id, **data)
     print(f"Event recorded: {args.event}")
     return 0
@@ -129,8 +146,16 @@ def cmd_run(args) -> int:
     print(f"数据目录: {run_dir} (项目目录无新增文件)")
     stages = get_enhanced_stages() if (args.tdd or args.bdd) else get_default_stages()
     try:
-        machine = StageMachine(run_dir, stages=stages, fail_fast=args.fail_fast, project_root=Path.cwd())
-        state = machine.run(requirement=args.requirement or "", resume=bool(args.resume), from_stage=args.from_stage, tdd=args.tdd, bdd=args.bdd)
+        machine = StageMachine(
+            run_dir, stages=stages, fail_fast=args.fail_fast, project_root=Path.cwd()
+        )
+        state = machine.run(
+            requirement=args.requirement or "",
+            resume=bool(args.resume),
+            from_stage=args.from_stage,
+            tdd=args.tdd,
+            bdd=args.bdd,
+        )
         print(f"\n状态: {state.status}")
         print(collect_stats(run_dir).summary())
         return 0 if state.status == "completed" else 1
@@ -148,9 +173,14 @@ def cmd_status(args) -> int:
     if not run_dir.exists():
         print("运行不存在", file=sys.stderr)
         return 1
-    info = {"run_id": run_id, "run_dir": str(run_dir), "events_exists": (run_dir / "events.jsonl").exists()}
+    info = {
+        "run_id": run_id,
+        "run_dir": str(run_dir),
+        "events_exists": (run_dir / "events.jsonl").exists(),
+    }
     if args.json:
         import json
+
         print(json.dumps(info, indent=2, ensure_ascii=False))
     else:
         print(f"Run ID: {info['run_id']}")
@@ -168,7 +198,7 @@ def cmd_tail(args) -> int:
         print("事件日志不存在", file=sys.stderr)
         return 1
     lines = events_file.read_text(encoding="utf-8").strip().split("\n")
-    for line in lines[-args.lines:]:
+    for line in lines[-args.lines :]:
         print(line)
     return 0
 
@@ -178,7 +208,11 @@ def cmd_list(args) -> int:
     if not runs_dir.exists():
         print("没有历史运行")
         return 0
-    runs = sorted([d for d in runs_dir.iterdir() if d.is_dir()], key=lambda d: d.stat().st_mtime, reverse=True)[:args.limit]
+    runs = sorted(
+        [d for d in runs_dir.iterdir() if d.is_dir()],
+        key=lambda d: d.stat().st_mtime,
+        reverse=True,
+    )[: args.limit]
     for d in runs:
         mtime = datetime.fromtimestamp(d.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
         print(f"  {d.name}  {mtime}")
@@ -195,6 +229,7 @@ def cmd_stats(args) -> int:
         print("运行不存在", file=sys.stderr)
         return 1
     from .stats import collect_stats
+
     print(collect_stats(run_dir).summary())
     return 0
 
@@ -205,7 +240,15 @@ def main(argv: list = None) -> int:
     if not args.command:
         parser.print_help()
         return 0
-    cmds = {"init": cmd_init, "emit": cmd_emit, "run": cmd_run, "status": cmd_status, "tail": cmd_tail, "list": cmd_list, "stats": cmd_stats}
+    cmds = {
+        "init": cmd_init,
+        "emit": cmd_emit,
+        "run": cmd_run,
+        "status": cmd_status,
+        "tail": cmd_tail,
+        "list": cmd_list,
+        "stats": cmd_stats,
+    }
     handler = cmds.get(args.command)
     if handler:
         try:

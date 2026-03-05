@@ -1,4 +1,5 @@
 """统计模块"""
+
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
@@ -45,9 +46,12 @@ class StageStats:
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "name": self.name, "status": self.status, "duration_ms": self.duration_ms,
+            "name": self.name,
+            "status": self.status,
+            "duration_ms": self.duration_ms,
             "token_usage": self.token_usage.to_dict(),
-            "start_time": self.start_time, "end_time": self.end_time,
+            "start_time": self.start_time,
+            "end_time": self.end_time,
         }
 
 
@@ -79,7 +83,9 @@ class RunStats:
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "run_id": self.run_id, "status": self.status, "requirement": self.requirement,
+            "run_id": self.run_id,
+            "status": self.status,
+            "requirement": self.requirement,
             "total_duration_ms": self.total_duration_ms,
             "total_token_usage": self.total_token_usage.to_dict(),
             "stages": {k: v.to_dict() for k, v in self.stages.items()},
@@ -94,7 +100,12 @@ class RunStats:
                 return f"{ms/1000:.2f}s"
             else:
                 return f"{ms//60000}m {(ms%60000)/1000:.1f}s"
-        lines = [f"Run: {self.run_id}", f"状态: {self.status}", f"耗时: {fmt(self.total_duration_ms)}"]
+
+        lines = [
+            f"Run: {self.run_id}",
+            f"状态: {self.status}",
+            f"耗时: {fmt(self.total_duration_ms)}",
+        ]
         if self.token_recorded:
             lines.append(f"Token: {self.total_token_usage.total_tokens:,}")
         return "\n".join(lines)
@@ -104,8 +115,8 @@ def parse_iso_timestamp(ts: str) -> Optional[datetime]:
     if not ts:
         return None
     try:
-        if ts.endswith('Z'):
-            ts = ts[:-1] + '+00:00'
+        if ts.endswith("Z"):
+            ts = ts[:-1] + "+00:00"
         return datetime.fromisoformat(ts)
     except Exception:
         return None
@@ -135,7 +146,9 @@ class StatsCollector:
                 stats.status = "completed"
                 stats.end_time = event.timestamp
                 if "stats" in event.data and "total_token_usage" in event.data["stats"]:
-                    stats.total_token_usage = TokenUsage.from_dict(event.data["stats"]["total_token_usage"])
+                    stats.total_token_usage = TokenUsage.from_dict(
+                        event.data["stats"]["total_token_usage"]
+                    )
                     stats.token_recorded = True
             elif event.type == "run.failed":
                 stats.status = "failed"
@@ -155,8 +168,12 @@ class StatsCollector:
                 stats.stages[sn].end_time = event.timestamp
                 stats.stages[sn].duration_ms = event.data.get("duration_ms", 0)
                 if "token_usage" in event.data:
-                    stats.stages[sn].token_usage = TokenUsage.from_dict(event.data["token_usage"])
-                    stats.total_token_usage = stats.total_token_usage + stats.stages[sn].token_usage
+                    stats.stages[sn].token_usage = TokenUsage.from_dict(
+                        event.data["token_usage"]
+                    )
+                    stats.total_token_usage = (
+                        stats.total_token_usage + stats.stages[sn].token_usage
+                    )
                     stats.token_recorded = True
             elif event.type == "stage.failed":
                 sn = event.data.get("stage", "")
@@ -164,10 +181,15 @@ class StatsCollector:
                     stats.stages[sn] = StageStats(name=sn)
                 stats.stages[sn].status = "failed"
             elif event.type == "llm.called":
-                stats.total_token_usage = stats.total_token_usage + TokenUsage.from_dict(event.data.get("token_usage", {}))
+                stats.total_token_usage = (
+                    stats.total_token_usage
+                    + TokenUsage.from_dict(event.data.get("token_usage", {}))
+                )
                 stats.token_recorded = True
         if stats.start_time and stats.end_time:
-            stats.total_duration_ms = calculate_duration(stats.start_time, stats.end_time)
+            stats.total_duration_ms = calculate_duration(
+                stats.start_time, stats.end_time
+            )
         return stats
 
 

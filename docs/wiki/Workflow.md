@@ -27,7 +27,7 @@
 
 ## 产物目录
 
-- `simplerig_data/runs/<run_id>/artifacts/`
+- `~/.codingengine/runs/<run_id>/artifacts/`
   - plan.json
   - code_changes.json
   - verify_result.json

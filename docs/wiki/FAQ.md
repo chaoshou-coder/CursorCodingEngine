@@ -1,8 +1,8 @@
 # 常见问题
 
-## 为什么用 simplerig 而不是自己写？
+## 为什么用 codingengine 而不是自己写？
 
-simplerig 已提供事件溯源、DAG、断点续传。CodingEngine 在其上做胶水即可，无需从零开发。
+codingengine 已提供事件溯源、DAG、断点续传。参考 simplerig 设计，作为独立工具实现，无需安装 simplerig。
 
 ## 为什么不需要 14 个 Agent？
 
@@ -22,4 +22,4 @@ Cursor 内置 subagent 够用。Skill 驱动行为，不建额外 Agent 层。
 
 ## 如何扩展 Skill？
 
-在 `.cursor/skills/` 下新建目录，含 SKILL.md。参考 simplerig、code-simplifier 格式。
+在 `.cursor/skills/` 下新建目录，含 SKILL.md。参考 codingengine、code-simplifier 格式。

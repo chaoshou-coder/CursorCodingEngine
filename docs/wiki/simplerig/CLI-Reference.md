@@ -1,10 +1,13 @@
-# simplerig CLI 参考
+# codingengine CLI 参考
+
+> 本页为 codingengine 命令参考。simplerig 为设计参考，实际使用 codingengine。
 
 ## init
 
 ```bash
-simplerig init "Short description"
-python -m simplerig.cli init "Short description"
+codingengine init "Short description"
+ce init "Short description"
+python -m codingengine.cli init "Short description"
 ```
 
 创建新 run，返回 run_id。
@@ -12,9 +15,9 @@ python -m simplerig.cli init "Short description"
 ## emit
 
 ```bash
-simplerig emit stage.started --stage plan --run-id <run_id>
-simplerig emit stage.completed --stage plan --run-id <run_id>
-simplerig emit run.completed --run-id <run_id>
+codingengine emit stage.started --stage plan --run-id <run_id>
+codingengine emit stage.completed --stage plan --run-id <run_id>
+codingengine emit run.completed --run-id <run_id>
 ```
 
 ## list
@@ -28,7 +31,7 @@ simplerig emit run.completed --run-id <run_id>
 ## tail
 
 ```bash
-simplerig tail --follow
+codingengine tail --follow
 ```
 
 实时查看事件流。
@@ -36,7 +39,7 @@ simplerig tail --follow
 ## stats
 
 ```bash
-simplerig stats
+codingengine stats
 ```
 
 Token 统计。
@@ -44,14 +47,14 @@ Token 统计。
 ## run
 
 ```bash
-simplerig run "需求" --tdd
-simplerig run "需求" --bdd
-simplerig run "需求" --resume
+codingengine run "需求" --tdd
+codingengine run "需求" --bdd
+codingengine run "需求" --resume
 ```
 
 ## bdd
 
 ```bash
-simplerig bdd generate spec.json -o features/
-simplerig bdd run features/demo.feature --report html
+codingengine bdd generate spec.json -o features/
+codingengine bdd run features/demo.feature --report html
 ```

@@ -1,4 +1,5 @@
 """Git 原子操作"""
+
 import subprocess
 from pathlib import Path
 from typing import Optional, Tuple
@@ -17,7 +18,9 @@ def find_git_root(start: Path) -> Optional[Path]:
 
 
 def _run_git(cwd: Path, *args: str) -> Tuple[int, str, str]:
-    result = subprocess.run(["git"] + list(args), cwd=cwd, capture_output=True, text=True)
+    result = subprocess.run(
+        ["git"] + list(args), cwd=cwd, capture_output=True, text=True
+    )
     return result.returncode, result.stdout, result.stderr
 
 
@@ -26,7 +29,9 @@ def has_uncommitted_changes(cwd: Path) -> bool:
     return code == 0 and bool(out.strip())
 
 
-def atomic_commit(cwd: Path, task_id: str, message: Optional[str] = None) -> Tuple[bool, Optional[str]]:
+def atomic_commit(
+    cwd: Path, task_id: str, message: Optional[str] = None
+) -> Tuple[bool, Optional[str]]:
     if not has_uncommitted_changes(cwd):
         return True, None
     code, _, err = _run_git(cwd, "add", "-A")
@@ -58,5 +63,7 @@ def rollback_task_commit(cwd: Path, task_id: str) -> Tuple[bool, Optional[str]]:
             parts = line.split()
             if parts:
                 code, _, err = _run_git(cwd, "revert", "--no-edit", parts[0])
-                return (True, None) if code == 0 else (False, f"git revert failed: {err}")
+                return (
+                    (True, None) if code == 0 else (False, f"git revert failed: {err}")
+                )
     return False, f"No commit found for task_id: {task_id}"

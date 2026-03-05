@@ -1,13 +1,13 @@
 ---
 name: code-simplifier
-description: "Anthropic Code-Simplifier 的 Cursor Skill 适配。在 simplerig develop 阶段每个 task 完成后、或 verify 前，对最近修改的代码进行清理与简化。遵循项目 CLAUDE.md/AGENTS.md 约定，泛化适用任意语言栈。"
+description: "Anthropic Code-Simplifier 的 Cursor Skill 适配。在 codingengine develop 阶段每个 task 完成后、或 verify 前，对最近修改的代码进行清理与简化。遵循项目 CLAUDE.md/AGENTS.md 约定，泛化适用任意语言栈。"
 ---
 
 # Code-Simplifier Skill
 
 **来源**：Anthropic [claude-plugins-official](https://github.com/anthropics/claude-plugins-official) / [claude-code](https://github.com/anthropics/claude-code) 的 code-simplifier 插件。
 
-**何时启用**：simplerig develop 阶段每个 task 原子提交前、或 develop 全部完成后 verify 前；或用户明确说「简化这段代码」「清理最近修改的代码」时。
+**何时启用**：codingengine develop 阶段每个 task 原子提交前、或 develop 全部完成后 verify 前；或用户明确说「简化这段代码」「清理最近修改的代码」时。
 
 ## 核心原则
 
@@ -19,7 +19,7 @@ description: "Anthropic Code-Simplifier 的 Cursor Skill 适配。在 simplerig 
 
 ## 触发时机
 
-- **每个 task 提交前**：在 simplerig 工作流中，每个 develop task 完成且 lint 通过后、执行 `git commit` 前，调用本 Skill 清理该 task 修改的代码
+- **每个 task 提交前**：在 codingengine 工作流中，每个 develop task 完成且 lint 通过后、执行 `git commit` 前，调用本 Skill 清理该 task 修改的代码
 - **develop 完成后**：若未按 task 粒度调用，则在 develop 阶段全部完成、verify 前统一调用一次
 - **用户显式请求**：用户说「simplify」「refine」「clean up」时
 
@@ -38,9 +38,9 @@ description: "Anthropic Code-Simplifier 的 Cursor Skill 适配。在 simplerig 
 - **规范来源**：优先读取 `CLAUDE.md`、`AGENTS.md`、`.cursor/rules/`，无则使用通用最佳实践
 - **范围**：仅处理用户指定或 git 显示的最近修改部分
 
-## 与 simplerig 的集成
+## 与 codingengine 的集成
 
-在 simplerig SKILL.md 的工作流中：
+在 codingengine SKILL.md 的工作流中：
 
 ```
 develop(task) → 修改代码 → lint → [code-simplifier 清理] → 原子提交
