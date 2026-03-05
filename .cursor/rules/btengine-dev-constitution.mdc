@@ -1,0 +1,112 @@
+---
+description: BTEngine 开发宪法 — Agentic Coding 六机制
+alwaysApply: true
+---
+
+# BTEngine 开发宪法
+
+## 1. 提案门控（Proposal Gate）
+
+在以下决策场景中，**必须先用 AskQuestion 工具向用户提案**，等用户明确确认后才可执行：
+
+- 创建新文件或新模块
+- 新增外部依赖
+- 修改公开接口签名（函数参数/返回值/类结构）
+- 选择算法或架构方案（如并行策略、GPU vs CPU 路径、优化目标函数）
+- 设定关键业务参数的默认值（如 walk-forward 窗口、风控阈值、成本模型参数）
+- 数据流或执行流程变更
+
+**不需要提案的**：纯实现细节（变量命名、循环结构、内部重构不改接口）、bug 修复、测试编写、文档更新。
+
+但所有参数选择和算法决定即使不需要提案，也必须在代码注释或 commit message 中记录理由。
+
+## 2. 决策日志（Architecture Decision Records）
+
+每个通过提案门控的决策，必须写入 `docs/decisions/NNN-title.md`，格式：
+
+```
+# NNN: 决策标题
+日期: YYYY-MM-DD
+状态: proposed / accepted / deprecated / superseded
+
+## 背景
+为什么需要做这个决策？
+
+## 选项
+- 选项 A：...（优点/缺点）
+- 选项 B：...（优点/缺点）
+
+## 决定
+选择了什么，为什么。
+
+## 后果
+这个决定带来的正面和负面影响。
+```
+
+## 3. 三阶段工作流
+
+每个功能或修复按以下阶段执行：
+
+**阶段一：规划**
+- 输出：任务清单（TodoWrite）
+- 如涉及架构决策 → 触发提案门控
+
+**阶段二：实现**
+- 按任务清单逐项编码
+- 遵循 TDD（见机制 5）
+- 每个文件修改后执行自检（见机制 4）
+
+**阶段三：审查**
+- 运行 `ReadLints` 检查编辑过的文件
+- 运行相关测试确认通过
+- 检查是否有可简化的逻辑、死代码、过度抽象
+- 更新决策日志（如适用）
+
+## 4. 编辑后自检
+
+每次修改 `src/quantengine/` 或 `tests/` 中的文件后：
+
+1. 对修改的文件运行 `ReadLints`
+2. 如果引入了 linter error，立即修复
+3. 检查：是否有可以删除的注释？是否有重复逻辑？命名是否自解释？
+
+## 5. TDD 前置
+
+新增 `src/quantengine/` 中的公开函数或类时：
+
+1. **先**在对应的 `tests/` 目录写测试（至少 1 个正常路径 + 1 个边界条件）
+2. **然后**写实现代码使测试通过
+3. 测试文件命名：`tests/{module}/test_{filename}.py`，镜像 src 结构
+
+例外：纯内部辅助函数（以 `_` 开头且不被外部调用）可不单独测试，但应通过调用者的测试覆盖。
+
+## 6. 上下文加载
+
+每次开始新任务前，根据任务类型读取关键文件：
+
+| 任务类型 | 必读文件 |
+|---------|---------|
+| 引擎改动 | `src/quantengine/engine/portfolio.py`, `engine/rules.py`, `engine/backtest.py` |
+| 策略改动 | `src/quantengine/strategy/base.py`, `strategy/examples/psar_trade_assist_v4.py` |
+| 指标改动 | `src/quantengine/indicators/technical.py`, `indicators/registry.py` |
+| 实验脚本 | 当前脚本文件 + `config.py` + 最近的 results 报告 |
+| 测试编写 | 对应的 src 模块 + 现有测试文件 |
+
+还必须读取：
+- `docs/decisions/` 目录中与当前模块相关的 ADR（如存在）
+- `.cursor/rules/` 中的全部规则文件
+
+---
+
+## 编码规范（快速参考）
+
+- **格式化**: `ruff format`
+- **Linting**: `ruff check`
+- **类型注解**: 公开 API 必须有；内部函数建议
+- **命名**: snake_case，函数名=动词+名词，不缩写
+- **文件**: 每个 < 500 行；每个函数 < 50 行
+- **注释**: 只解释"为什么"，不叙述"做什么"
+- **日志**: `src/` 中用 `logger = logging.getLogger(__name__)`，不用 `print()`
+- **路径**: 用 `pathlib.Path`，不用字符串拼接
+- **可选依赖**: CuPy/Numba/Optuna 不可用时优雅降级并 warn
+- **配置**: 所有可调参数从 YAML/环境变量读取，有默认值和文档

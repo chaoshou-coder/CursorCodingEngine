@@ -1,0 +1,21 @@
+---
+description: 持续推进开发并在人工阻塞时更新卡点文档
+alwaysApply: true
+---
+
+# 持续推进与人工阻塞交接规则
+
+- 默认执行模式：持续推进开发任务，直到完工，不因常规不确定性中断。
+- 仅在以下情况允许进入等待人工：
+  - MT4/图形界面人工验证（回放、Strategy Tester、人工判定）
+  - 业务决策需人工拍板（阈值冻结、权重冻结）
+  - 外部权限/数据/文件缺失且当前会话无法自取
+- 一旦进入等待人工，必须先更新 `docs/current_blockers_manual_actions.md`：
+  - 更新第 2 节运行状态快照
+  - 新增或更新阻塞卡片（影响、人工步骤、完成判定、回传格式）
+  - 写明“人工完成后 Agent 下一步”
+- 人工回传后，必须：
+  - 校验证据并把阻塞卡状态改为 `RESOLVED`
+  - 同步 `memory/state.json`、`memory/index.json`、`memory/experiments.jsonl`
+  - 新增 `memory/handoffs/` 记录后继续推进
+- 未更新上述文档与治理记录前，不得口头宣称“已交接/已阻塞”。

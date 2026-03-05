@@ -1,0 +1,27 @@
+---
+description: Sprint 1 并行开发协调 — 文件所有权和接口契约
+alwaysApply: true
+---
+
+# Sprint 1 并行开发协调
+
+本规则在 Sprint 1 期间生效。三条并行轨道（Track A 风控 / Track B 成本 / Track C 测试）同时执行。
+
+## 开始任务前必须做
+
+1. **读取协调文件**：`docs/sprint1_coordination.md`
+2. **确认自己是哪条轨道**：根据用户指令判断（风控=Track A，成本=Track B，测试=Track C）
+3. **确认文件所有权**：只修改自己轨道的独占文件，其他文件只读
+
+## 文件所有权（不可违反）
+
+- **Track A**: 只改 `src/quantengine/engine/rules.py`, `src/quantengine/engine/portfolio.py`, `tests/engine/test_rules.py`
+- **Track B**: 只改 `src/quantengine/engine/backtest.py`, `tests/engine/test_cost_scenarios.py`
+- **Track C**: 只改 `tests/**/*`，不改任何 `src/` 文件
+
+## 遇到文件冲突时
+
+如果你需要修改非独占文件：
+1. **立即停止**
+2. 在 `docs/sprint1_coordination.md` 的"跨轨道依赖"表中记录
+3. 告知用户需要等另一条轨道完成后处理

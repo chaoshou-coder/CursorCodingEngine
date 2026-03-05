@@ -1,0 +1,18 @@
+---
+description: 多Agent接手时必须使用项目共享记忆
+alwaysApply: true
+---
+
+# 共享记忆与交接治理（全局）
+
+- 在每次会话开始前，先读取并确认：
+  - `memory/00_system_snapshot.md`
+  - `memory/01_risk_guardrails.md`
+  - `memory/02_param_decisions.md`
+- 若本次有实质变更，必须新增或更新：
+  - `memory/handoffs/` 下的接手记录
+  - `memory/state.json` 的状态字段
+  - 相关 ADR（变更影响范围较大时）并放入 `memory/adr/`
+- 关键实验与指标建议写入 `memory/experiments.jsonl`（JSONL 行）。
+- `memory/index.json` 为目录索引，新增重要节点后务必同步更新 `latest_handoff` 和 `open_questions`。
+- 不建议在回复中口头描述尚未写入 memory 的核心决策。
