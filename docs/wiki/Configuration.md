@@ -1,27 +1,51 @@
 # 配置详解
 
-## 配置文件位置
+## 一、配置文件位置与优先级
 
-- 项目根 `config.yaml`
-- 或环境变量 `CODINGENGINE_CONFIG` 指向的路径
+1. **环境变量 `CODINGENGINE_CONFIG`** 指向的路径
+2. **项目根目录 `config.yaml`**
+3. **内置默认值**
 
-## 模型配置
+若无配置文件，codingengine 使用合理默认值，可直接运行。
 
-仅保留 `context_limit` 作为任务拆分依据。已废弃：
-- `performance_degradation_point`
-- `optimal_context`
+## 二、模型配置
 
-示例：
+### models.registry
+
+任务拆分仅依据 `context_limit`。已废弃 `performance_degradation_point`、`optimal_context`。
+
 ```yaml
 models:
   registry:
     cursor/gpt-5.2-codex:
-      provider: "cursor"
-      context_limit: 272000
+      provider: "cursor"       # cursor | api
+      context_limit: 272000    # 必填，任务拆分依据
       strengths: ["code_gen", "bug_fixing"]
+      cost_per_1k: 0.0
+      tier: "standard"
 ```
 
-## 项目结构
+- **provider**：`cursor` 使用 Cursor 内置模型，`api` 调用外部 API
+- **context_limit**：模型上下文窗口大小，planner 按此拆分任务
+- **strengths**：模型擅长领域，用于角色分配参考
+- **tier**：用户自定义等级（如 extra_high、high、standard）
+
+### models.roles
+
+角色与模型的映射，用于规划与验证阶段：
+
+```yaml
+  roles:
+    architect: "cursor/opus-4.6-max"
+    planner: "cursor/opus-4.6-max"
+    dev: "cursor/gpt-5.2-codex-extra-high"
+    verifier: "cursor/auto"
+    rescue: "cursor/opus-4.6-max"
+```
+
+实际模型调用由 Cursor 负责，此处主要用于 context_limit 约束与规划阶段约束。
+
+## 三、项目结构
 
 ```yaml
 project:
@@ -29,17 +53,66 @@ project:
   test_dirs: ["tests", "test"]
 ```
 
-## 工具链
+用于确定源码与测试目录，planner 与 linter 会参考。
+
+## 四、工具链
 
 ```yaml
 tools:
-  linter: "ruff"
-  formatter: "black"
-  test_runner: "pytest"
+  linter: "ruff"           # 或 flake8, pylint, eslint
+  formatter: "black"      # 或 autopep8, prettier
+  test_runner: "pytest"   # 或 unittest, jest
+
+  linter_args: ["check", "--fix"]
+  formatter_args: []
+  test_runner_args: ["-v"]
 ```
 
-## 环境变量
+支持非 Python 项目，配置对应语言的 linter、formatter、test_runner 即可。code-simplifier 已泛化，不限定语言栈。
 
-- `CODINGENGINE_CONFIG` — 配置文件路径
-- `CODINGENGINE_DATA` — 数据目录（默认 `~/.codingengine`）
-- `CODINGENGINE_LOGS` — 日志路径
+## 五、路径配置
+
+```yaml
+paths:
+  database: "${CODINGENGINE_DATA:-~/.codingengine}/memory.db"
+  logs: "${CODINGENGINE_DATA:-~/.codingengine}/logs"
+  temp: "${CODINGENGINE_DATA:-~/.codingengine}/temp"
+```
+
+默认使用 `~/.codingengine/`，可通过 `CODINGENGINE_DATA` 覆盖。
+
+## 六、并行配置
+
+```yaml
+parallel:
+  default_agents: 3
+  max_agents: 5
+  task_groups: 3
+```
+
+DAG 调度时的并发控制。`max_agents` 限制同时执行的任务数。
+
+## 七、超时与重试
+
+```yaml
+timeouts:
+  tdd_red_phase: 30
+  tdd_green_phase: 30
+  tdd_max_retries: 3
+  run_lock: 30
+  tool: 300
+```
+
+TDD 阶段超时、工具调用超时、重试次数等。
+
+## 八、环境变量
+
+| 变量 | 说明 | 默认 |
+|------|------|------|
+| `CODINGENGINE_CONFIG` | 配置文件路径 | 项目根 config.yaml |
+| `CODINGENGINE_DATA` | 数据目录 | `~/.codingengine` |
+| `CODINGENGINE_LOGS` | 日志路径 | `~/.codingengine/logs` |
+
+## 九、完整示例
+
+参考 `simplerig/config.yaml`（本仓库 `simplerig/` 目录下）获取完整配置示例，包含 API、预算、日志等。CodingEngine 兼容该格式，并扩展 `CODINGENGINE_*` 环境变量。

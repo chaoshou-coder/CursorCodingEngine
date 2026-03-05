@@ -1,6 +1,14 @@
 # 安装指南
 
-## 克隆 CursorCodingEngine
+## 一、前置要求
+
+- **Python 3.10+**：codingengine 为 Python 包
+- **Git**：用于 clone 仓库、原子提交与回滚
+- **Cursor**（可选）：用于 Skill 驱动的工作流；CLI 可独立运行
+
+## 二、安装方式
+
+### 方式一：克隆仓库并本地安装（推荐）
 
 ```bash
 git clone https://github.com/chaoshou-coder/CursorCodingEngine.git
@@ -8,32 +16,47 @@ cd CursorCodingEngine
 pip install -e .
 ```
 
-CodingEngine 为独立产品，clone 一次即获得完整工具。
+`-e` 表示可编辑安装，修改源码后无需重新安装即可生效。CodingEngine 为独立产品，clone 一次即获得完整工具，**无需安装 simplerig 或其它参考项目**。
 
-## 验证安装
+### 方式二：作为 Git Submodule
 
-```bash
-codingengine --help
-# 或
-ce --help
-# 或
-python -m codingengine.cli --help
-pip show codingengine
-```
-
-## 虚拟环境
-
-建议在项目虚拟环境中安装。**命名建议**：使用 `CCEfor<项目名>` 格式（如 `CCEforMyApp`、`CCEforEagle`），便于区分多项目环境。
+若希望将 CodingEngine 作为子模块纳入现有项目：
 
 ```bash
-# 创建 venv（推荐命名：CCEfor<项目名>）
-python -m venv CCEforMyApp
-# Windows: CCEforMyApp\Scripts\Activate.ps1
-# Linux/macOS: source CCEforMyApp/bin/activate
+git submodule add https://github.com/chaoshou-coder/CursorCodingEngine.git tools/codingengine
+cd tools/codingengine
 pip install -e .
 ```
 
-若使用默认 `.venv` 亦可：
+### 方式三：PyPI（若已发布）
+
+```bash
+pip install codingengine
+```
+
+## 三、虚拟环境
+
+强烈建议在虚拟环境中安装，避免与系统或其它项目依赖冲突。
+
+### 命名建议
+
+使用 `CCEfor<项目名>` 格式（如 `CCEforMyApp`、`CCEforEagle`），便于在多项目环境中区分。
+
+```bash
+# 创建 venv（推荐命名）
+python -m venv CCEforMyApp
+
+# 激活
+# Windows PowerShell:
+CCEforMyApp\Scripts\Activate.ps1
+# Linux/macOS:
+source CCEforMyApp/bin/activate
+
+# 安装
+pip install -e .
+```
+
+### 使用默认 .venv
 
 ```bash
 python -m venv .venv
@@ -42,7 +65,50 @@ python -m venv .venv
 pip install -e .
 ```
 
-## 平台差异
+## 四、验证安装
 
-- **Windows**：PowerShell 不支持 `&&`，用 `;` 分隔命令
-- **macOS/Linux**：标准 bash 即可
+```bash
+codingengine --help
+# 或短别名
+ce --help
+# 或模块方式
+python -m codingengine.cli --help
+# 确认包信息
+pip show codingengine
+```
+
+若 `codingengine` 命令不可用，优先使用 `python -m codingengine.cli`。确认 `pip show codingengine` 的 Location 指向正确项目。
+
+## 五、平台差异
+
+### Windows
+
+- **PowerShell 不支持 `&&`**：用分号 `;` 分隔命令，如 `cd e:\code\proj; .\venv\Scripts\Activate.ps1`
+- **激活脚本**：`.\CCEforMyApp\Scripts\Activate.ps1` 或 `.\venv\Scripts\Activate.ps1`
+- **路径**：注意反斜杠与正斜杠，建议使用 `pathlib.Path`
+
+### macOS / Linux
+
+- 标准 bash 即可
+- 激活：`source CCEforMyApp/bin/activate` 或 `source .venv/bin/activate`
+
+## 六、配置文件（可选）
+
+项目根目录可放置 `config.yaml` 覆盖默认配置。若无此文件，codingengine 使用内置默认值。详见 [配置详解](Configuration.md)。
+
+## 七、常见安装问题
+
+### 命令找不到
+
+- 确认已激活虚拟环境
+- 使用 `python -m codingengine.cli` 替代 `codingengine`
+- 检查 `pip show codingengine` 的 Location 是否指向当前项目
+
+### 装到错误环境
+
+- 先激活目标 venv，再执行 `pip install -e .`
+- 多项目时使用 `CCEfor<项目名>` 命名，避免混淆
+
+### 权限错误
+
+- 在 Windows 上若遇执行策略限制，可临时设置：`Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`

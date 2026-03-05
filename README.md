@@ -54,4 +54,4 @@ ce init "我的任务"
 
 ## 设计参考
 
-simplerig 设计思路，独立实现。
+CodingEngine 在 **simplerig**、**everything-claude-code (ECC)**、**oh-my-opencode (OMO)**、**OpenSpec** 四个项目基础上胶水而成，通过 Skill 与 Rules 融合各项目最佳实践。独立实现，无需安装参考项目。详见 [docs/wiki/References.md](docs/wiki/References.md)。
