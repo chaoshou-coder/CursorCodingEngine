@@ -12,6 +12,7 @@ build/
 .venv/
 venv/
 ENV/
+CCEfor*/
 
 # 运行时数据（codingengine 默认在 ~/.codingengine，此处仅作备份）
 .codingengine/
@@ -31,3 +32,9 @@ ENV/
 # 系统
 .DS_Store
 Thumbs.db
+
+# 参考文件夹（不参与安装与发布，仅本地参考）
+/simplerig/
+/OpenSpec/
+/oh-my-opencode/
+/everything-claude-code/
