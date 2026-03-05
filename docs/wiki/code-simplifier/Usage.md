@@ -22,7 +22,7 @@
 
 ## 四、与主工作流的集成
 
-在主工作流 Skill 中，develop 阶段每个 task 的流程为：
+在 `.cursor/skills/codingengine/SKILL.md` 主工作流中，develop 阶段每个 task 的流程为：
 
 1. 修改代码
 2. 立即 lint（ECC 质量门禁）

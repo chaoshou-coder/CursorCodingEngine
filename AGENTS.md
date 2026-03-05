@@ -14,24 +14,30 @@ CodingEngine 以 codingengine 为独立编排工具（参考 simplerig 设计）
 
 ```
 CursorCodingEngine/
-├── .cursor/
-│   ├── rules/           # codingengine-workflow, quality-standards, context-management
+├── .cursor/             # rules、skills 项目配置
+│   ├── rules/           # codingengine-workflow, quality-standards, context-management 等
 │   └── skills/
-│       ├── simplerig/   # 主工作流 Skill
+│       ├── codingengine/   # 主工作流 Skill
 │       └── code-simplifier/  # 代码清理 Skill
 ├── src/
-│   └── codingengine/    # 独立工具（不依赖 simplerig）
+│   └── codingengine/    # 独立工具，不依赖 simplerig 等参考项目
 │       ├── cli.py       # 入口：codingengine / ce
 │       ├── config.py    # 配置，默认 ~/.codingengine
 │       ├── planner.py   # 按 context_limit 拆分
 │       ├── runner.py    # 阶段机
+│       ├── events.py    # 事件溯源
 │       ├── git_ops.py   # 原子提交/回滚
-│       └── stages.py    # plan/develop/verify/integrate
-├── simplerig/           # 设计参考（不参与安装）
+│       ├── stages.py    # plan/develop/verify/integrate
+│       ├── tdd.py       # TDD 模式
+│       ├── bdd.py       # BDD 模式
+│       └── ...
 ├── docs/
 │   └── wiki/            # 文档集
+├── pyproject.toml       # 包配置
 └── AGENTS.md            # 本文件
 ```
+
+> **说明**：simplerig、OpenSpec、oh-my-opencode、everything-claude-code 为参考文件夹，已 .gitignore，clone 后不包含。
 
 ## 关键约定
 
@@ -43,7 +49,8 @@ CursorCodingEngine/
 
 ## 参考项目
 
-- simplerig（设计参考，不参与安装）
-- everything-claude-code（ECC agents/skills）
-- oh-my-opencode（OMO 3 层委派、Boulder 续航）
+- simplerig（设计参考，已 gitignore，不参与安装）
+- everything-claude-code（ECC agents/skills，已 gitignore）
+- oh-my-opencode（OMO 3 层委派、Boulder 续航，已 gitignore）
+- OpenSpec（Artifact 依赖图，已 gitignore）
 - Anthropic code-simplifier（代码清理）

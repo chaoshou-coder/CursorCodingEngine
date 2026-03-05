@@ -17,11 +17,7 @@ docs/wiki/
 ├── Workflow.md                      # 工作流详解
 ├── Skills.md                        # Skill 系统
 ├── Rules.md                         # Rules 体系
-├── simplerig/
-│   ├── Overview.md                  # simplerig 概览
-│   ├── Integration.md               # 集成方式
-│   ├── Config-Reference.md          # config.yaml 完整参考
-│   └── CLI-Reference.md             # CLI 命令参考
+├── CLI-Reference.md                 # codingengine CLI 命令参考
 ├── code-simplifier/
 │   ├── Overview.md                  # code-simplifier 概览
 │   └── Usage.md                     # 使用指南
@@ -121,26 +117,9 @@ docs/wiki/
 - context-management.mdc：静态注入、修改前读取、跨文件理解
 - Rules 与 Skill 的分工
 
-### simplerig/Overview.md
+### CLI-Reference.md
 
-- simplerig 简介与定位（设计参考）
-- 事件溯源、阶段机、DAG 调度
-- 与 CodingEngine 的关系
-
-### simplerig/Integration.md
-
-- 如何集成到 CodingEngine
-- Skill 驱动 vs CLI 直接调用
-- 参数化改造（context_limit）
-
-### simplerig/Config-Reference.md
-
-- config.yaml 完整字段参考
-- 每个字段说明、默认值、示例
-
-### simplerig/CLI-Reference.md
-
-- init, emit, list, status, tail, stats
+- init, emit, list, status, tail, stats, run, bdd
 - 每个命令的用法、参数、示例
 
 ### code-simplifier/Overview.md
@@ -256,6 +235,6 @@ docs/wiki/
 
 - **wiki-scaffold**：创建 docs/wiki/ 目录结构及 Home.md、Getting-Started.md 骨架
 - **wiki-core**：完成 Architecture、Concepts、Workflow、Skills、Rules、Configuration
-- **wiki-reference**：完成 simplerig（设计参考）、code-simplifier 子目录文档
+- **wiki-reference**：完成 code-simplifier 子目录文档、CLI-Reference
 - **wiki-ops**：完成 Troubleshooting、FAQ、Contributing、Glossary
 - **wiki-sync**：配置 GitHub Wiki 同步（若采用方式 B）

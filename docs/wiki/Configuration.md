@@ -115,4 +115,4 @@ TDD 阶段超时、工具调用超时、重试次数等。
 
 ## 九、完整示例
 
-参考 `simplerig/config.yaml`（本仓库 `simplerig/` 目录下）获取完整配置示例，包含 API、预算、日志等。CodingEngine 兼容该格式，并扩展 `CODINGENGINE_*` 环境变量。
+完整配置示例见本文档上文。CodingEngine 兼容 simplerig 的 config 格式，并扩展 `CODINGENGINE_*` 环境变量。CLI 命令见 [CLI-Reference](CLI-Reference.md)。

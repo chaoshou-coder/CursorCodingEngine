@@ -1,7 +1,5 @@
 # codingengine CLI 参考
 
-> 本页为 codingengine 命令参考。simplerig 为设计参考，实际使用 codingengine。
-
 ## init
 
 ```bash

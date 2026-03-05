@@ -41,7 +41,7 @@
 
 **SKILL.md** 为唯一集成点，驱动 Agent 行为。不建 14 个 Agent，Cursor 内置 subagent 够用。
 
-四个参考项目的最佳实践通过 Skill 中的自然语言指令融入，无需额外代码或 Hook 适配层。主工作流 Skill 位于 `.cursor/skills/simplerig/SKILL.md`，包含 OMO Just Do、Boulder 续航、ECC 质量门禁、code-simplifier 调用时机等。
+四个参考项目的最佳实践通过 Skill 中的自然语言指令融入，无需额外代码或 Hook 适配层。主工作流 Skill 位于 `.cursor/skills/codingengine/SKILL.md`，包含 OMO Just Do、Boulder 续航、ECC 质量门禁、code-simplifier 调用时机等。
 
 ---
 

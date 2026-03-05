@@ -14,7 +14,7 @@ Anthropic [claude-plugins-official](https://github.com/anthropics/claude-plugins
 
 ## 三、与 CodingEngine 的 glue 方式
 
-转为 Cursor Skill（`.cursor/skills/code-simplifier/SKILL.md`），在 **codingengine develop 阶段**每个 task 提交前调用。泛化语言栈，不限定 ES/React。
+转为 Cursor Skill（`.cursor/skills/code-simplifier/SKILL.md`），由主工作流 `.cursor/skills/codingengine/SKILL.md` 定义调用时机，在 **codingengine develop 阶段**每个 task 提交前调用。泛化语言栈，不限定 ES/React。
 
 **集成流程**：
 ```

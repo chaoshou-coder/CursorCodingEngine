@@ -1,9 +1,9 @@
 ---
-name: simplerig
+name: codingengine
 description: "CodingEngine 核心工作流：规划→开发→验证→完成。融入 OMO Just Do 模式、Boulder 续航、ECC 质量门禁、code-simplifier 清理。用户提到「开发计划」「执行计划」「按计划执行」、或 @ .cursor/plans/*.plan.md 时启用。"
 ---
 
-# SimpleRig 工作流（CodingEngine 增强版）
+# CodingEngine 工作流
 
 **何时启用**：用户 @ `.cursor/plans/*.plan.md`、或说「开发计划现在执行」「按计划执行」、或提出开发需求时。
 

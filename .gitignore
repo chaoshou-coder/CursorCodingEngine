@@ -23,9 +23,11 @@ CCEfor*/
 *.log
 *.tmp
 
-# IDE
+# IDE 与工具缓存（与项目本身无关）
 .vscode/
 .idea/
+.pytest_cache/
+.ruff_cache/
 *.swp
 *.swo
 
@@ -38,3 +40,4 @@ Thumbs.db
 /OpenSpec/
 /oh-my-opencode/
 /everything-claude-code/
+/docs/requirements_and_solutions.md
