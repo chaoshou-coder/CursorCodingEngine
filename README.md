@@ -1,57 +1,38 @@
 # CodingEngine
 
-编排+执行+迭代的 AI 辅助开发工具。**不污染项目目录**，所有数据在 `~/.codingengine/`。
+> 编排 + 执行 + 迭代的 AI 辅助开发工具。通过**任务工程**让弱模型达到强模型效果，目标将 SWE-bench ~50% 推到 70-80%+。
 
-## 快速开始
+## 这是什么
 
-```bash
-git clone https://github.com/chaoshou-coder/CursorCodingEngine.git
-cd CursorCodingEngine
-pip install -e .
-codingengine init "我的第一个任务"
+CodingEngine 是 Cursor 专属的 Agentic Coding 基础设施。它不替代 Cursor，而是**把复杂开发任务拆成模型能处理的小任务**，按依赖并行执行，每个任务原子提交、失败可回滚，验证失败时自动诊断重试。
+
+**核心思路**：类似 MapReduce —— 不可能的大任务 → 可能的小任务，每个原子化、可回滚、可并行。弱模型通过工程手段达到强模型效果。
+
+## 工作原理
+
+```
+用户需求 → plan（拆分任务）→ develop（逐任务：修改→lint→清理→原子提交）→ verify（全量测试，失败则回滚重试）→ 完成
 ```
 
-或使用短别名：
+**三大能力**：
 
-```bash
-ce init "我的任务"
-```
+| 能力 | 做什么 | 为什么重要 |
+|------|--------|------------|
+| **编排** | 按 context_limit 拆分任务，DAG 依赖，无依赖可并行 | 避免超出模型窗口，提升吞吐 |
+| **执行** | 每任务独立 git commit，失败 `git revert` | 精确定位、可回滚、不污染其它任务 |
+| **迭代** | verify 失败 → 诊断 → 回滚失败任务 → 重试（最多 3 轮） | 不止一轮修复，预期 +10-15 pp |
 
-## 前置要求
+**Skill 即胶水**：不建 14 个 Agent、60+ Skill。通过 `.cursor/skills/` 中的 SKILL.md 驱动 Cursor Agent，融入 simplerig、ECC、OMO、OpenSpec 的最佳实践。
 
-- Python 3.10+
-- Cursor（可选，用于 Skill 驱动）
-- Git
+**不污染项目目录**：所有 runs、events、artifacts 在 `~/.codingengine/runs/`，项目内零新增文件。
 
-## 核心特性
+## 快速上手
 
-- **不污染项目目录**：runs、events、artifacts 全部在 `~/.codingengine/runs/`，项目内零新增文件
-- **编排能力**：按 context_limit 拆分任务，DAG 依赖
-- **执行能力**：原子提交、失败回滚
-- **迭代能力**：verify 失败 → 诊断 → 重试（最多 3 轮）
-
-## 常用命令
-
-| 命令 | 说明 |
-|------|------|
-| `codingengine init "需求"` | 初始化新 run |
-| `codingengine run "需求"` | 运行工作流 |
-| `codingengine run --resume` | 断点续传 |
-| `codingengine status` | 查看状态 |
-| `codingengine list` | 列出历史运行 |
-| `codingengine stats` | 统计 |
-
-## 环境变量
-
-- `CODINGENGINE_DATA`：覆盖数据目录（默认 `~/.codingengine`）
-- `CODINGENGINE_CONFIG`：配置文件路径
-
-## 文档
-
-- [快速开始](docs/wiki/Getting-Started.md)
-- [安装指南](docs/wiki/Installation.md)
-- [配置详解](docs/wiki/Configuration.md)
+- [快速开始](docs/wiki/快速开始.md)
+- [使用教程](docs/wiki/使用教程.md) — 完整示例
+- [安装指南](docs/wiki/安装指南.md)
+- [CLI 参考](docs/wiki/CLI参考.md)
 
 ## 设计参考
 
-CodingEngine 在 **simplerig**、**everything-claude-code (ECC)**、**oh-my-opencode (OMO)**、**OpenSpec** 四个项目基础上胶水而成，通过 Skill 与 Rules 融合各项目最佳实践。独立实现，无需安装参考项目。详见 [docs/wiki/References.md](docs/wiki/References.md)。
+simplerig、everything-claude-code (ECC)、oh-my-opencode (OMO)、OpenSpec 四项目胶水而成，详见 [参考项目与引用](docs/wiki/参考项目与引用.md)。
